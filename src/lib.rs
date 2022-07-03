@@ -1,6 +1,3 @@
-mod humanize;
-mod random;
-
 use std::{
     env, fmt,
     fs::{self, File},
@@ -143,7 +140,7 @@ pub fn pack(d: &[u8], enc: Encoder) -> io::Result<Vec<u8>> {
     info!(
         "packing (algorithm {}, current size {})",
         enc.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
 
     let packed = match enc {
@@ -164,8 +161,8 @@ pub fn pack(d: &[u8], enc: Encoder) -> io::Result<Vec<u8>> {
     info!(
         "packed to {} (before {}, new size {})",
         enc.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(packed)
 }
@@ -175,7 +172,7 @@ pub fn unpack(d: &[u8], dec: Decoder) -> io::Result<Vec<u8>> {
     info!(
         "unpacking (algorithm {}, current size {})",
         dec.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
 
     let unpacked = match dec {
@@ -204,8 +201,8 @@ pub fn unpack(d: &[u8], dec: Decoder) -> io::Result<Vec<u8>> {
     info!(
         "unpacked to {} (before {}, new size {})",
         dec.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(unpacked)
 }
@@ -235,7 +232,7 @@ pub fn pack_file(src_path: &str, dst_path: &str, enc: Encoder) -> io::Result<()>
         src_path,
         dst_path,
         enc.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
 
     match enc {
@@ -274,8 +271,8 @@ pub fn pack_file(src_path: &str, dst_path: &str, enc: Encoder) -> io::Result<()>
         src_path,
         dst_path,
         enc.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(())
 }
@@ -305,7 +302,7 @@ pub fn unpack_file(src_path: &str, dst_path: &str, dec: Decoder) -> io::Result<(
         src_path,
         dst_path,
         dec.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
 
     match dec {
@@ -343,8 +340,8 @@ pub fn unpack_file(src_path: &str, dst_path: &str, dec: Decoder) -> io::Result<(
         src_path,
         dst_path,
         dec.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(())
 }
@@ -560,13 +557,14 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
         src_dir_path,
         dst_path,
         enc.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
 
     let parent_dir = Path::new(src_dir_path)
         .parent()
         .expect("unexpected no parent dir");
-    let archive_path = parent_dir.join(random::tmp_path(10, None).expect("expected some tmp_path"));
+    let archive_path =
+        parent_dir.join(random_manager::tmp_path(10, None).expect("expected some tmp_path"));
     let archive_path = archive_path
         .as_path()
         .to_str()
@@ -864,8 +862,8 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
         src_dir_path,
         dst_path,
         enc.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(())
 }
@@ -884,7 +882,7 @@ pub fn unpack_directory(
         src_archive_path,
         dst_dir_path,
         dec.to_string(),
-        humanize::bytes(size_before),
+        human_readable::bytes(size_before),
     );
     fs::create_dir_all(dst_dir_path)?;
     let target_dir = Path::new(dst_dir_path);
@@ -1144,8 +1142,8 @@ pub fn unpack_directory(
         src_archive_path,
         dst_dir_path,
         dec.to_string(),
-        humanize::bytes(size_before),
-        humanize::bytes(size_after),
+        human_readable::bytes(size_before),
+        human_readable::bytes(size_after),
     );
     Ok(())
 }
@@ -1239,11 +1237,11 @@ fn test_pack_unpack() {
         assert_eq!(contents, contents_unpacked);
     }
 
-    let src_dir_path_buf = env::temp_dir().join(random::string(10));
+    let src_dir_path_buf = env::temp_dir().join(random_manager::string(10));
     fs::create_dir_all(&src_dir_path_buf).unwrap();
     let src_dir_path = src_dir_path_buf.to_str().unwrap();
     for _i in 0..20 {
-        let p = src_dir_path_buf.join(random::string(10));
+        let p = src_dir_path_buf.join(random_manager::string(10));
         let mut f = File::create(&p).unwrap();
         f.write_all(&contents).unwrap();
     }
@@ -1276,7 +1274,7 @@ fn test_pack_unpack() {
         let encoder = DirEncoder::new(encs[i]).unwrap();
         let decoder = DirDecoder::new(decs[i]).unwrap();
 
-        let compressed_path = random::tmp_path(10, Some(encoder.suffix())).unwrap();
+        let compressed_path = random_manager::tmp_path(10, Some(encoder.suffix())).unwrap();
         pack_directory(src_dir_path, &compressed_path, encoder).unwrap();
 
         if encs[i].ne("zip") {
@@ -1285,7 +1283,7 @@ fn test_pack_unpack() {
             assert!(src_dir_size > meta_packed.len());
         }
 
-        let dst_dir_path = random::tmp_path(10, None).unwrap();
+        let dst_dir_path = random_manager::tmp_path(10, None).unwrap();
         unpack_directory(&compressed_path, &dst_dir_path, decoder).unwrap();
 
         fs::remove_file(compressed_path).unwrap();

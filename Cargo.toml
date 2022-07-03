@@ -1,6 +1,6 @@
 [package]
 name = "compress-manager"
-version = "0.0.1" # https://crates.io/crates/compress-manager
+version = "0.0.2" # https://crates.io/crates/compress-manager
 edition = "2021"
 rust-version = "1.62"
 publish = true
@@ -13,10 +13,11 @@ license = "Apache-2.0"
 bs58 = "0.4.0"
 flate2 = { version = "1.0.24", optional = false }
 fs_extra = { version = "1.2.0", optional = false }
+human-readable = "0.0.1"
 lazy_static = "1.4.0"
 log = "0.4.17"
 path-clean = { version = "0.1.0", optional = false }
-ring = "0.16.20"
+random-manager = "0.0.1"
 tar = { version = "0.4.38", optional = false }
 walkdir = { version = "2.3.2", optional = false }
 zip = { version = "0.6.2", optional = false }
