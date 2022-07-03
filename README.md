@@ -1,5 +1,5 @@
 
-Small utilities (to be published as a separate crate)
+Rust compression manager
 
 ![Crates.io](https://img.shields.io/crates/v/compress-manager?logo=rust&style=for-the-badge)
 
