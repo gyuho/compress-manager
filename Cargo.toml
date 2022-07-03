@@ -1,0 +1,26 @@
+[package]
+name = "compress-manager"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.62"
+publish = true
+repository = "https://github.com/gyuho/compress-manager"
+readme = "README.md"
+license = "Apache-2.0"
+
+[dependencies]
+bs58 = "0.4.0"
+flate2 = { version = "1.0.24", optional = false }
+fs_extra = { version = "1.2.0", optional = false }
+lazy_static = "1.4.0"
+log = "0.4.17"
+path-clean = { version = "0.1.0", optional = false }
+ring = "0.16.20"
+tar = { version = "0.4.38", optional = false }
+walkdir = { version = "2.3.2", optional = false }
+zip = { version = "0.6.2", optional = false }
+zstd = { version = "0.10", optional = false } # don't update until https://github.com/gyscos/zstd-rs/issues/147 is addressed
+
+[dev-dependencies]
+env_logger = "0.9.0"
+tempfile = "3.3.0"
