@@ -2,7 +2,7 @@
 name = "compress-manager"
 version = "0.0.2" # https://crates.io/crates/compress-manager
 edition = "2021"
-rust-version = "1.62"
+rust-version = "1.63"
 publish = true
 description = "Rust compression manager"
 repository = "https://github.com/gyuho/compress-manager"
