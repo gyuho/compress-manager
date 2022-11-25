@@ -24,5 +24,5 @@ zip = { version = "0.6.2", optional = false }
 zstd = { version = "0.10", optional = false } # don't update until https://github.com/gyscos/zstd-rs/issues/147 is addressed
 
 [dev-dependencies]
-env_logger = "0.9.0"
+env_logger = "0.10.0"
 tempfile = "3.3.0"
