@@ -21,7 +21,7 @@ random-manager = "0.0.1"
 tar = { version = "0.4.38", optional = false }
 walkdir = { version = "2.3.2", optional = false }
 zip = { version = "0.6.2", optional = false }
-zstd = { version = "0.10", optional = false } # don't update until https://github.com/gyscos/zstd-rs/issues/147 is addressed
+zstd = { version = "0.12", optional = false } # don't update until https://github.com/gyscos/zstd-rs/issues/147 is addressed
 
 [dev-dependencies]
 env_logger = "0.10.0"
