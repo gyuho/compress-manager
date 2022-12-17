@@ -1,8 +1,8 @@
 [package]
 name = "compress-manager"
-version = "0.0.3" # https://crates.io/crates/compress-manager
+version = "0.0.4" # https://crates.io/crates/compress-manager
 edition = "2021"
-rust-version = "1.65"
+rust-version = "1.66"
 publish = true
 description = "Rust compression manager"
 repository = "https://github.com/gyuho/compress-manager"
@@ -17,7 +17,7 @@ human-readable = "0.0.1"
 lazy_static = "1.4.0"
 log = "0.4.17"
 path-clean = { version = "0.1.0", optional = false }
-random-manager = "0.0.1"
+random-manager = "0.0.2"
 tar = { version = "0.4.38", optional = false }
 walkdir = { version = "2.3.2", optional = false }
 zip = { version = "0.6.3", optional = false }
