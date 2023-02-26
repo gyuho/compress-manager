@@ -1,6 +1,6 @@
 [package]
 name = "compress-manager"
-version = "0.0.5" # https://crates.io/crates/compress-manager
+version = "0.0.6" # https://crates.io/crates/compress-manager
 edition = "2021"
 rust-version = "1.67"
 publish = true
@@ -12,7 +12,7 @@ license = "Apache-2.0"
 [dependencies]
 bs58 = "0.4.0"
 flate2 = { version = "1.0.25", optional = false }
-fs_extra = { version = "1.2.0", optional = false }
+fs_extra = { version = "1.3.0", optional = false }
 human-readable = "0.0.1"
 lazy_static = "1.4.0"
 log = "0.4.17"
@@ -25,4 +25,4 @@ zstd = { version = "0.12", optional = false } # don't update until https://githu
 
 [dev-dependencies]
 env_logger = "0.10.0"
-tempfile = "3.3.0"
+tempfile = "3.4.0"
