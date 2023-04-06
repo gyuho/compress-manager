@@ -1,8 +1,8 @@
 [package]
 name = "compress-manager"
-version = "0.0.6" # https://crates.io/crates/compress-manager
+version = "0.0.7" # https://crates.io/crates/compress-manager
 edition = "2021"
-rust-version = "1.67"
+rust-version = "1.68"
 publish = true
 description = "Rust compression manager"
 repository = "https://github.com/gyuho/compress-manager"
@@ -11,18 +11,18 @@ license = "Apache-2.0"
 
 [dependencies]
 bs58 = "0.4.0"
-flate2 = { version = "1.0.25", optional = false }
-fs_extra = { version = "1.3.0", optional = false }
+flate2 = "1.0.25"
+fs_extra = "1.3.0"
 human-readable = "0.0.1"
 lazy_static = "1.4.0"
 log = "0.4.17"
-path-clean = { version = "1.0.1", optional = false }
+path-clean = "1.0.1"
 random-manager = "0.0.5"
-tar = { version = "0.4.38", optional = false }
-walkdir = { version = "2.3.2", optional = false }
-zip = { version = "0.6.4", optional = false }
-zstd = { version = "0.12", optional = false } # don't update until https://github.com/gyscos/zstd-rs/issues/147 is addressed
+tar = "0.4.38"
+walkdir = "2.3.3"
+zip = "0.6.4"
+zstd = "0.12"
 
 [dev-dependencies]
 env_logger = "0.10.0"
-tempfile = "3.4.0"
+tempfile = "3.5.0"

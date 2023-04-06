@@ -11,7 +11,6 @@ use flate2::{
     Compression,
 };
 use fs_extra;
-use log::info;
 use path_clean::PathClean;
 use tar::{Archive, Builder};
 use walkdir::{DirEntry, WalkDir};
@@ -137,7 +136,7 @@ impl Decoder {
 
 pub fn pack(d: &[u8], enc: Encoder) -> io::Result<Vec<u8>> {
     let size_before = d.len() as f64;
-    info!(
+    log::info!(
         "packing (algorithm {}, current size {})",
         enc.to_string(),
         human_readable::bytes(size_before),
@@ -158,7 +157,7 @@ pub fn pack(d: &[u8], enc: Encoder) -> io::Result<Vec<u8>> {
     };
 
     let size_after = packed.len() as f64;
-    info!(
+    log::info!(
         "packed to {} (before {}, new size {})",
         enc.to_string(),
         human_readable::bytes(size_before),
@@ -169,7 +168,7 @@ pub fn pack(d: &[u8], enc: Encoder) -> io::Result<Vec<u8>> {
 
 pub fn unpack(d: &[u8], dec: Decoder) -> io::Result<Vec<u8>> {
     let size_before = d.len() as f64;
-    info!(
+    log::info!(
         "unpacking (algorithm {}, current size {})",
         dec.to_string(),
         human_readable::bytes(size_before),
@@ -198,7 +197,7 @@ pub fn unpack(d: &[u8], dec: Decoder) -> io::Result<Vec<u8>> {
     };
 
     let size_after = unpacked.len() as f64;
-    info!(
+    log::info!(
         "unpacked to {} (before {}, new size {})",
         dec.to_string(),
         human_readable::bytes(size_before),
@@ -227,7 +226,7 @@ pub fn unpack(d: &[u8], dec: Decoder) -> io::Result<Vec<u8>> {
 pub fn pack_file(src_path: &str, dst_path: &str, enc: Encoder) -> io::Result<()> {
     let meta = fs::metadata(src_path)?;
     let size_before = meta.len() as f64;
-    info!(
+    log::info!(
         "packing file '{}' to '{}' (algorithm {}, current size {})",
         src_path,
         dst_path,
@@ -266,7 +265,7 @@ pub fn pack_file(src_path: &str, dst_path: &str, enc: Encoder) -> io::Result<()>
 
     let meta = fs::metadata(dst_path)?;
     let size_after = meta.len() as f64;
-    info!(
+    log::info!(
         "packed file '{}' to '{}' (algorithm {}, before {}, new size {})",
         src_path,
         dst_path,
@@ -297,7 +296,7 @@ pub fn pack_file(src_path: &str, dst_path: &str, enc: Encoder) -> io::Result<()>
 pub fn unpack_file(src_path: &str, dst_path: &str, dec: Decoder) -> io::Result<()> {
     let meta = fs::metadata(src_path)?;
     let size_before = meta.len() as f64;
-    info!(
+    log::info!(
         "unpacking file '{}' to '{}' (algorithm {}, current size {})",
         src_path,
         dst_path,
@@ -335,7 +334,7 @@ pub fn unpack_file(src_path: &str, dst_path: &str, dec: Decoder) -> io::Result<(
 
     let meta = fs::metadata(dst_path)?;
     let size_after = meta.len() as f64;
-    info!(
+    log::info!(
         "unpacked file '{}' to '{}' (algorithm {}, before {}, new size {})",
         src_path,
         dst_path,
@@ -552,7 +551,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
         )
     })?;
     let size_before = size as f64;
-    info!(
+    log::info!(
         "packing directory from '{}' to '{}' (algorithm {}, current size {})",
         src_dir_path,
         dst_path,
@@ -613,7 +612,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                             .as_os_str()
                             .to_str()
                             .expect("unexpected None os_str");
-                        info!("adding directory {}", dir_name);
+                        log::info!("adding directory {}", dir_name);
                         zip.add_directory(dir_name, options)?;
                     }
                     continue;
@@ -623,7 +622,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                     .as_os_str()
                     .to_str()
                     .expect("unexpected None os_str");
-                info!("adding file {}", file_name);
+                log::info!("adding file {}", file_name);
                 zip.start_file(file_name, options)?;
                 let mut f = File::open(full_path)?;
                 f.read_to_end(&mut buffer)?;
@@ -632,7 +631,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
             }
             zip.finish()?;
 
-            info!("renaming archived file {} to {}", archive_path, dst_path);
+            log::info!("renaming archived file {} to {}", archive_path, dst_path);
             fs::rename(archive_path, dst_path)?;
         }
 
@@ -678,7 +677,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                     .as_os_str()
                     .to_str()
                     .expect("unexpected None os_str");
-                info!("adding file {}", file_name);
+                log::info!("adding file {}", file_name);
                 let mut f = File::open(&full_path)?;
                 tar.append_file(&file_name, &mut f)?;
             }
@@ -727,7 +726,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                             .as_os_str()
                             .to_str()
                             .expect("unexpected None os_str");
-                        info!("adding directory {}", dir_name);
+                        log::info!("adding directory {}", dir_name);
                         zip.add_directory(dir_name, options)?;
                     }
                     continue;
@@ -737,7 +736,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                     .as_os_str()
                     .to_str()
                     .expect("unexpected None os_str");
-                info!("adding file {}", file_name);
+                log::info!("adding file {}", file_name);
                 zip.start_file(file_name, options)?;
                 let mut f = File::open(full_path)?;
                 f.read_to_end(&mut buffer)?;
@@ -784,7 +783,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                     .as_os_str()
                     .to_str()
                     .expect("unexpected None os_str");
-                info!("adding file {}", file_name);
+                log::info!("adding file {}", file_name);
                 let mut f = File::open(&full_path)?;
                 tar.append_file(&file_name, &mut f)?;
             }
@@ -833,7 +832,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                             .as_os_str()
                             .to_str()
                             .expect("unexpected None os_str");
-                        info!("adding directory {}", dir_name);
+                        log::info!("adding directory {}", dir_name);
                         zip.add_directory(dir_name, options)?;
                     }
                     continue;
@@ -843,7 +842,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
                     .as_os_str()
                     .to_str()
                     .expect("unexpected None os_str");
-                info!("adding file {}", file_name);
+                log::info!("adding file {}", file_name);
                 zip.start_file(file_name, options)?;
                 let mut f = File::open(full_path)?;
                 f.read_to_end(&mut buffer)?;
@@ -857,7 +856,7 @@ pub fn pack_directory(src_dir_path: &str, dst_path: &str, enc: DirEncoder) -> io
 
     let meta = fs::metadata(dst_path)?;
     let size_after = meta.len() as f64;
-    info!(
+    log::info!(
         "packed directory from '{}' to '{}' (algorithm {}, before {}, new size {})",
         src_dir_path,
         dst_path,
@@ -877,7 +876,7 @@ pub fn unpack_directory(
 ) -> io::Result<()> {
     let meta = fs::metadata(src_archive_path)?;
     let size_before = meta.len() as f64;
-    info!(
+    log::info!(
         "unpacking directory from '{}' to '{}' (algorithm {}, current size {})",
         src_archive_path,
         dst_dir_path,
@@ -894,7 +893,7 @@ pub fn unpack_directory(
         if src_archive_path.ends_with(dec.compression_ext()) {
             let p = src_archive_path.replace(dec.compression_ext(), "");
             if Path::new(&p).exists() {
-                info!("decompressed path already exists, removing {}", p);
+                log::info!("decompressed path already exists, removing {}", p);
                 fs::remove_file(&p)?;
             }
             p
@@ -905,7 +904,7 @@ pub fn unpack_directory(
 
     match dec {
         DirDecoder::Zip => {
-            info!("unarchiving the zip file {}", src_archive_path);
+            log::info!("unarchiving the zip file {}", src_archive_path);
             let zip_file = File::open(&src_archive_path)?;
             let mut zip = match ZipArchive::new(zip_file) {
                 Ok(v) => v,
@@ -935,10 +934,10 @@ pub fn unpack_directory(
 
                 let is_dir = (*f.name()).ends_with('/');
                 if is_dir {
-                    info!("extracting directory {}", output_path.display());
+                    log::info!("extracting directory {}", output_path.display());
                     fs::create_dir_all(&output_path)?;
                 } else {
-                    info!("extracting file {}", output_path.display());
+                    log::info!("extracting file {}", output_path.display());
                     if let Some(p) = output_path.parent() {
                         if !p.exists() {
                             fs::create_dir_all(&p)?;
@@ -956,7 +955,7 @@ pub fn unpack_directory(
         DirDecoder::TarGzip => {
             unpack_file(src_archive_path, &decompressed_path, Decoder::Gzip)?;
 
-            info!("unarchiving decompressed file {}", decompressed_path);
+            log::info!("unarchiving decompressed file {}", decompressed_path);
             let tar_file = File::open(&decompressed_path)?;
             let mut tar = Archive::new(tar_file);
             let entries = tar.entries()?;
@@ -975,10 +974,10 @@ pub fn unpack_directory(
                         .expect("unexpected None str")
                         .ends_with('/')
                 {
-                    info!("extracting directory {}", output_path.display());
+                    log::info!("extracting directory {}", output_path.display());
                     fs::create_dir_all(output_path)?;
                 } else {
-                    info!("extracting file {}", output_path.display());
+                    log::info!("extracting file {}", output_path.display());
                     let mut f2 = File::create(&output_path)?;
                     io::copy(&mut f, &mut f2)?;
                     fs::set_permissions(&output_path, PermissionsExt::from_mode(0o775))?;
@@ -989,7 +988,7 @@ pub fn unpack_directory(
         DirDecoder::ZipGzip => {
             unpack_file(src_archive_path, &decompressed_path, Decoder::Gzip)?;
 
-            info!("unarchiving decompressed file {}", decompressed_path);
+            log::info!("unarchiving decompressed file {}", decompressed_path);
             let zip_file = File::open(&decompressed_path)?;
             let mut zip = match ZipArchive::new(zip_file) {
                 Ok(v) => v,
@@ -1018,10 +1017,10 @@ pub fn unpack_directory(
 
                 let is_dir = (*f.name()).ends_with('/');
                 if is_dir {
-                    info!("extracting directory {}", output_path.display());
+                    log::info!("extracting directory {}", output_path.display());
                     fs::create_dir_all(&output_path)?;
                 } else {
-                    info!("extracting file {}", output_path.display());
+                    log::info!("extracting file {}", output_path.display());
                     if let Some(p) = output_path.parent() {
                         if !p.exists() {
                             fs::create_dir_all(&p)?;
@@ -1038,7 +1037,7 @@ pub fn unpack_directory(
         DirDecoder::TarZstd => {
             unpack_file(src_archive_path, &decompressed_path, Decoder::Zstd)?;
 
-            info!("unarchiving decompressed file {}", decompressed_path);
+            log::info!("unarchiving decompressed file {}", decompressed_path);
             let tar_file = File::open(&decompressed_path)?;
             let mut tar = Archive::new(tar_file);
             let entries = tar.entries()?;
@@ -1057,10 +1056,10 @@ pub fn unpack_directory(
                         .expect("unexpected None str")
                         .ends_with('/')
                 {
-                    info!("extracting directory {}", output_path.display());
+                    log::info!("extracting directory {}", output_path.display());
                     fs::create_dir_all(output_path)?;
                 } else {
-                    info!("extracting file {}", output_path.display());
+                    log::info!("extracting file {}", output_path.display());
                     let mut f2 = File::create(&output_path)?;
                     io::copy(&mut f, &mut f2)?;
                     fs::set_permissions(&output_path, PermissionsExt::from_mode(0o775))?;
@@ -1071,7 +1070,7 @@ pub fn unpack_directory(
         DirDecoder::ZipZstd => {
             unpack_file(src_archive_path, &decompressed_path, Decoder::Zstd)?;
 
-            info!("unarchiving decompressed file {}", decompressed_path);
+            log::info!("unarchiving decompressed file {}", decompressed_path);
             let zip_file = File::open(&decompressed_path)?;
             let mut zip = match ZipArchive::new(zip_file) {
                 Ok(v) => v,
@@ -1100,10 +1099,10 @@ pub fn unpack_directory(
 
                 let is_dir = (*f.name()).ends_with('/');
                 if is_dir {
-                    info!("extracting directory {}", output_path.display());
+                    log::info!("extracting directory {}", output_path.display());
                     fs::create_dir_all(&output_path)?;
                 } else {
-                    info!("extracting file {}", output_path.display());
+                    log::info!("extracting file {}", output_path.display());
                     if let Some(p) = output_path.parent() {
                         if !p.exists() {
                             fs::create_dir_all(&p)?;
@@ -1119,7 +1118,7 @@ pub fn unpack_directory(
     }
 
     if Path::new(&decompressed_path).exists() {
-        info!(
+        log::info!(
             "removing decompressed file {} after unarchive",
             decompressed_path
         );
@@ -1137,7 +1136,7 @@ pub fn unpack_directory(
         )
     })?;
     let size_after = size as f64;
-    info!(
+    log::info!(
         "decompressed directory from '{}' to '{}' (algorithm {}, before {}, new size {})",
         src_archive_path,
         dst_dir_path,
@@ -1237,15 +1236,15 @@ fn test_pack_unpack() {
         assert_eq!(contents, contents_unpacked);
     }
 
-    let src_dir_path_buf = env::temp_dir().join(random_manager::string(10));
+    let src_dir_path_buf = env::temp_dir().join(random_manager::secure_string(10));
     fs::create_dir_all(&src_dir_path_buf).unwrap();
     let src_dir_path = src_dir_path_buf.to_str().unwrap();
     for _i in 0..20 {
-        let p = src_dir_path_buf.join(random_manager::string(10));
+        let p = src_dir_path_buf.join(random_manager::secure_string(10));
         let mut f = File::create(&p).unwrap();
         f.write_all(&contents).unwrap();
     }
-    info!("created {}", src_dir_path_buf.display());
+    log::info!("created {}", src_dir_path_buf.display());
     let src_dir_size = fs_extra::dir::get_size(src_dir_path_buf.clone()).unwrap();
 
     let encs = vec![
